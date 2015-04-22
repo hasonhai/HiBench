@@ -24,14 +24,14 @@ export HIBENCH_VERSION="4.0"
 
 ###################### Global Paths ##################
 
-export JAVA_HOME=
-export HADOOP_HOME=
-export HADOOP_EXECUTABLE=
-export HADOOP_CONF_DIR=
-export HADOOP_EXAMPLES_JAR=
-export MAPRED_EXECUTABLE=
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.79.x86_64/jre
+export HADOOP_HOME=/usr/hdp/2.2.4.2-2/hadoop
+export HADOOP_EXECUTABLE=/usr/hdp/2.2.4.2-2/hadoop/bin/hadoop
+export HADOOP_CONF_DIR=/etc/hadoop/conf
+export HADOOP_EXAMPLES_JAR=/usr/hdp/2.2.4.2-2/hadoop-mapreduce/hadoop-mapreduce-examples.jar
+export MAPRED_EXECUTABLE=/usr/hdp/2.2.4.2-2/hadoop-mapreduce/bin/mapred
 #Set the varaible below only in YARN mode
-export HADOOP_JOBCLIENT_TESTS_JAR=
+export HADOOP_JOBCLIENT_TESTS_JAR=/usr/hdp/current/hadoop-yarn-client/hadoop-yarn-client.jar
 
 export HADOOP_MAPRED_HOME=$HADOOP_HOME
 export HADOOP_VERSION=hadoop2 # set it to hadoop1 to enable MR1, hadoop2 to enable MR2
