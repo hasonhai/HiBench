@@ -18,6 +18,8 @@
     <module>nutchindexing</module>
     <module>mahout</module>
     <module>hivebench</module>
+    <module>sparkwordcount</module>
+    <module>sparkdfsio</module>
   </modules>
 
 </project>

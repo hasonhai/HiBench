@@ -85,6 +85,9 @@ Note: Since HiBench-2.2, the input data of benchmarks are all automatically gene
   3. Setup Hive (for hivebench)
     
       Please make sure you have properly set up Hive in your cluster if you want to test hivebench. Or the benchmark willuse the default release fetched by maven.
+  4. Setup Spark
+
+      Locate into `HiBench/common/hibench` and run `mvn package` to build Spark job executive jar file.
 
 2. Configure for the all workloads
 
@@ -96,6 +99,7 @@ Note: Since HiBench-2.2, the input data of benchmarks are all automatically gene
           COMPRESS_CODEC_GLOBAL  <The default codec used for in/out data compression>
 
     Note: Do not change the default values of other global environment variables unless necessary.
+          Please specify JDK version in `conf/version.sh` and run `source conf/version.sh` before running test
 
 3. Configure each workload
 
