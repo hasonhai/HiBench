@@ -14,10 +14,12 @@
 # limitations under the License.
 
 #!/bin/bash
+bin=`dirname "$0"`
+bin=`cd "$bin"; pwd`
 
 if [ $platform ]; then
   if [ "$platform" = "spark" ]; then
-    source spark-configure.sh
+    source ${bin}/../conf/spark-configure.sh
   fi
 else
   platform="hadoop"
