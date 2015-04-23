@@ -21,7 +21,7 @@ script="$(basename -- "$this")"
 this="$bin/$script"
 
 export HIBENCH_VERSION="4.0"
-
+source ${bin}/../conf/version.sh
 ###################### Global Paths ##################
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-${JDK_VERSION}.x86_64/jre
 export HADOOP_HOME=/usr/hdp/current/hadoop-client
@@ -31,6 +31,9 @@ export HADOOP_EXAMPLES_JAR=/usr/hdp/current/hadoop-mapreduce-client/hadoop-mapre
 export MAPRED_EXECUTABLE=/usr/hdp/current/hadoop-mapreduce-client/bin/mapred
 #Set the variable below only in YARN mode
 export HADOOP_JOBCLIENT_TESTS_JAR=/usr/hdp/current/hadoop-yarn-client/hadoop-yarn-client.jar
+#Set these only when using spark on YARN
+export SPARK_HOME=/usr/share/spark
+export SPARK_SUBMIT_EXECUTABLE=${SPARK_HOME}/bin/spark-submit
 
 export HADOOP_MAPRED_HOME=$HADOOP_HOME
 export HADOOP_VERSION=hadoop2 # set it to hadoop1 to enable MR1, hadoop2 to enable MR2
@@ -84,8 +87,8 @@ if [ -z "$HIVE_HOME" ]; then
 fi
 
 if [ -z "$MAHOUT_HOME" ]; then
-    export MAHOUT_RELEASE=mahout-distribution-0.7
-    export MAHOUT_EXAMPLE_JOB="mahout-examples-0.7-job.jar"
+    export MAHOUT_RELEASE=mahout-distribution-0.9
+    export MAHOUT_EXAMPLE_JOB="mahout-examples-0.9-job.jar"
     export MAHOUT_HOME=${DEPENDENCY_DIR}/mahout/target/${MAHOUT_RELEASE}
 fi
 
@@ -118,7 +121,7 @@ export HIBENCH_REPORT=${HIBENCH_HOME}/hibench.report
 ################# Compress Options #################
 # swith on/off compression: 0-off, 1-on.
 # Switch it off (COMPRESS_GLOBAL=0) for better performance
-export COMPRESS_GLOBAL=1
+export COMPRESS_GLOBAL=0
 export COMPRESS_CODEC_GLOBAL=org.apache.hadoop.io.compress.DefaultCodec
 export COMPRESS_CODEC_MAP=org.apache.hadoop.io.compress.DefaultCodec
 # Set COMPRESS_CODEC_MAP to SnappyCodec (as shown below) for better performance

@@ -2,7 +2,7 @@
 #wordcount
 #wordcount
 #wordcount
-dfsioe
+#dfsioe
 #hivebench
 #kmeans
 #pagerank
@@ -10,3 +10,5 @@ dfsioe
 #sort
 #terasort
 #sleep
+#sparkdfsio
+sparkwordcount

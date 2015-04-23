@@ -16,7 +16,7 @@
   <properties>
     <!-- You can rewrite these properties to identify different repo and file. If you wanna run on a cdh cluster or hadoop 2, you may need to wget mahout cdh version(http://archive.cloudera.com/cdh5/cdh/5/mahout-0.9-cdh5.1.0.tar.gz). -->
     <repo>http://archive.apache.org</repo>
-    <file>dist/mahout/0.7/mahout-distribution-0.7.tar.gz</file>
+    <file>dist/mahout/0.9/mahout-distribution-0.9.tar.gz</file>
   </properties>
 
   <build>
