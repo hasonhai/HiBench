@@ -115,3 +115,58 @@ function check_compress() {
     fi
   fi
 }
+
+function run-spark-job() {
+    LIB_JARS=
+    while (($#)); do
+      if [ "$1" = "--jars" ]; then
+        LIB_JARS="--jars $2"
+        shift 2
+        continue
+      fi
+      break
+    done
+
+    CLS=$1
+    shift
+    
+    if [ -d $DIR/prepare ]; then
+	WORKLOAD_DIR=$DIR
+    elif [ -d $DIR/../prepare ]; then
+	WORKLOAD_DIR=$DIR/..
+    else
+	echo "Unknown workload path!"
+	exit 1
+    fi
+    cat ${WORKLOAD_DIR}/../conf/global_properties.conf ${WORKLOAD_DIR}/conf/properties.conf > ${WORKLOAD_DIR}/conf/._prop.conf
+    PROP_FILES="${WORKLOAD_DIR}/conf/._prop.conf"
+    export SPARKBENCH_PROPERTIES_FILES=${PROP_FILES}
+
+    YARN_OPTS=""
+    if [[ "$SPARK_MASTER" == yarn-* ]]; then
+       YARN_OPTS="--num-executors ${YARN_NUM_EXECTORS:-1}"
+       if [[ -n "${YARN_EXECUTOR_CORES:-}" ]]; then
+	   YARN_OPTS="${YARN_OPTS} --executor-cores ${YARN_EXECUTOR_CORES}"
+       fi
+       if [[ -n "${YARN_EXECUTOR_MEMORY:-}" ]]; then
+	   YARN_OPTS="${YARN_OPTS} --executor-memory ${YARN_EXECUTOR_MEMORY}"
+       fi
+       if [[ -n "${YARN_DRIVER_MEMORY:-}" ]]; then
+           YARN_OPTS="${YARN_OPTS} --driver-memory ${YARN_DRIVER_MEMORY}"
+       fi
+    fi
+    if [[ "$CLS" == *.py ]]; then 
+	LIB_JARS="$LIB_JARS --jars ${SPARKBENCH_JAR}"
+	${SPARK_HOME}/bin/spark-submit ${LIB_JARS} --properties-file ${PROP_FILES} --master ${SPARK_MASTER} ${YARN_OPTS} ${CLS} $@
+    else
+	echo ${SPARK_HOME}/bin/spark-submit ${LIB_JARS} --properties-file ${PROP_FILES} --class ${CLS} --master ${SPARK_MASTER} ${YARN_OPTS} ${SPARKBENCH_JAR} $@
+	${SPARK_HOME}/bin/spark-submit ${LIB_JARS} --properties-file ${PROP_FILES} --class ${CLS} --master ${SPARK_MASTER} ${YARN_OPTS} ${SPARKBENCH_JAR} $@
+    fi
+    result=$?
+#    rm -rf ${WORKLOAD_DIR}/conf/._prop.conf 2> /dev/null || true
+    if [ $result -ne 0 ]
+    then
+	echo "ERROR: Spark job ${CLS} failed to run successfully."
+	exit $result
+    fi
+}

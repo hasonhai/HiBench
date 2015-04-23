@@ -1,14 +1,14 @@
-#nutchindexing
-#wordcount
-#wordcount
-#wordcount
-#dfsioe
-#hivebench
-#kmeans
-#pagerank
-#bayes
-#sort
-#terasort
-#sleep
-#sparkdfsio
-sparkwordcount
+#benchmark_name platform
+#
+#nutchindexing hadoop
+#wordcount hadoop
+wordcount spark
+#dfsioe hadoop
+#dfsioe spark
+#hivebench hadoop
+#kmeans hadoop
+#pagerank hadoop
+#bayes hadoop
+#sort hadoop
+#terasort hadoop
+#sleep hadoop

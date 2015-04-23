@@ -15,6 +15,14 @@
 
 #!/bin/bash
 
+if [ $platform ]; then
+  if [ "$platform" = "spark" ]; then
+    source spark-configure.sh
+  fi
+else
+  platform="hadoop"
+fi
+
 # compress
 # for best performance set COMPRESS=1 for MR1 and COMPRESS=0 for MR2 (for WordCount)
 COMPRESS=$COMPRESS_GLOBAL

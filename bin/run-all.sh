@@ -23,10 +23,21 @@ if [ -f $HIBENCH_REPORT ]; then
     rm $HIBENCH_REPORT
 fi
 
-for benchmark in `cat $DIR/conf/benchmarks.lst`; do
+while read benchmark_info; do
+    benchmark=$( echo $benchmark_info | cut -d' ' -f1 )
+    platform=$( echo $benchmark_info | cut -d' ' -f2 )
     if [[ $benchmark == \#* ]]; then
         continue
     fi
+    case "$platform" in
+      spark)  
+        export platform="spark"
+        ;;
+      *)
+        export platform="hadoop"
+        ;; # default platform
+    esac
+    echo $platform
 
     if [ "$benchmark" = "dfsioe" ] ; then
         # dfsioe specific
@@ -42,9 +53,9 @@ for benchmark in `cat $DIR/conf/benchmarks.lst`; do
 
     else
         if [ -e $DIR/${benchmark}/bin/prepare.sh ]; then
-            $DIR/${benchmark}/bin/prepare.sh
+           $DIR/${benchmark}/bin/prepare.sh
         fi
         $DIR/${benchmark}/bin/run.sh
     fi
-done
+done < $DIR/conf/benchmarks.lst
 

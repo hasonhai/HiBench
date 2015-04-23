@@ -16,7 +16,7 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-echo "========== running wordcount bench =========="
+echo "========== running wordcount bench on $platform =========="
 # configure
 DIR=`cd $bin/../; pwd`
 . "${DIR}/../bin/hibench-config.sh"
@@ -36,7 +36,8 @@ $HADOOP_EXECUTABLE $RMDIR_CMD $OUTPUT_HDFS
 START_TIME=`timestamp`
 
 # run bench
-$HADOOP_EXECUTABLE jar $HADOOP_EXAMPLES_JAR wordcount \
+if [ "$platform" = "hadoop" ]; then
+  $HADOOP_EXECUTABLE jar $HADOOP_EXAMPLES_JAR wordcount \
     $COMPRESS_OPT \
     -D $CONFIG_REDUCER_NUMBER=${NUM_REDS} \
     -D mapreduce.inputformat.class=org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat \
@@ -45,16 +46,30 @@ $HADOOP_EXECUTABLE jar $HADOOP_EXAMPLES_JAR wordcount \
     -D mapreduce.job.outputformat.class=org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat \
     $INPUT_HDFS $OUTPUT_HDFS \
     2>&1 | tee ${DIR}/$TMPLOGFILE
-
+elif [ "$platform" = "spark" ]; then
+  JAR_PATH="${DIR}/../common/hibench/sparkwordcount/target/sparkwordcount-0.0.1-SNAPSHOT.jar"
+  $SPARK_SUBMIT_EXECUTABLE --class com.orange.sparkwordcount.SparkWordCount \
+    --num-executors ${NUM_EXECUTORS} \
+    ${JAR_PATH} $INPUT_HDFS $OUTPUT_HDFS \
+    2>&1 | tee ${DIR}/$TMPLOGFILE
+    #TODO: Integrate compress option
+else echo "unknown platform"
+fi
 # post-running
 END_TIME=`timestamp`
-
-if [ "x"$HADOOP_VERSION == "xhadoop1" ]; then
-  SIZE=$($HADOOP_EXECUTABLE job -history $INPUT_HDFS | grep 'org.apache.hadoop.examples.RandomTextWriter$Counters.*|BYTES_WRITTEN')
-  SIZE=${SIZE##*|}
-  SIZE=${SIZE//,/}
+if [ "$platform" = "hadoop" ]; then
+  if [ "x"$HADOOP_VERSION == "xhadoop1" ]; then
+    SIZE=$($HADOOP_EXECUTABLE job -history $INPUT_HDFS | grep 'org.apache.hadoop.examples.RandomTextWriter$Counters.*|BYTES_WRITTEN')
+    SIZE=${SIZE##*|}
+    SIZE=${SIZE//,/}
+  else
+    SIZE=`grep "Bytes Read" ${DIR}/$TMPLOGFILE | sed 's/Bytes Read=//'`
+  fi
+elif [ "$platform" = "spark" ]; then
+  SIZE=`dir_size $INPUT_HDFS`  
 else
-  SIZE=`grep "Bytes Read" ${DIR}/$TMPLOGFILE | sed 's/Bytes Read=//'`
+  SIZE=0
+  echo Cannot get Bytes Read
 fi
 
 rm -rf ${DIR}/$TMPLOGFILE
