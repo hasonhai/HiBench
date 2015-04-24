@@ -17,27 +17,27 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-echo "========== preparing dfsioe data =========="
+echo "========== Running dfsioe write =========="
 # configure
 DIR=`cd $bin/../; pwd`
 . "${DIR}/../bin/hibench-config.sh"
 . "${DIR}/conf/configure.sh"
 
-# path check
-$HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}
+#path check
+#$HADOOP_EXECUTABLE dfs -rmr ${OUTPUT_HDFS}
 
-# generate data
-if [ "$platform" = "spark" ]; then
-  JAR_PATH="${DIR}/../common/hibench/sparkdfsio/target/sparkdfsio-0.0.1-SNAPSHOT.jar"
-  # Spark dfsio take file size at 2-bytes unit, need to convert to MegaByte-unit
-  let "FILE_SIZE =  $FILE_SIZE * 500000"
-  echo $SPARK_SUBMIT_EXECUTABLE --class fr.eurecom.dsg.SparkDFSIO \
-    --num-executors ${NUM_EXECUTORS} \
-    ${JAR_PATH} write ${NUM_OF_FILES} ${FILE_SIZE} $INPUT_HDFS \
-    2>&1
-else # run on hadoop platform
-  ${HADOOP_EXECUTABLE} jar ${DATATOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+# pre-running
+OPTION="-write -nrFiles ${WT_NUM_OF_FILES} -fileSize ${WT_FILE_SIZE} -bufferSize 4096 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
+START_TIME=`timestamp`
+
+#run benchmark
+${HADOOP_EXECUTABLE} jar ${DATATOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
-    -write -skipAnalyze -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 
-fi
+    ${OPTION} -resFile ${DIR}/result_write.txt -tputFile ${DIR}/throughput_write.csv
+
+# post-running
+END_TIME=`timestamp`
+SIZE=`dir_size $INPUT_HDFS`
+gen_report "DFSIOE-WRITE" ${START_TIME} ${END_TIME} ${SIZE}
+

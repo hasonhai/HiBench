@@ -7,4 +7,3 @@ export SPARK_MASTER_MEMORY=1G
 export NUM_EXECUTORS=15 #TODO: should get from YARN config
 export MASTER=yarn-cluster ## Set the mode
 export LOCAL_DIRS=/tmp
-

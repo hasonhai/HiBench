@@ -2,9 +2,9 @@
 #
 #nutchindexing hadoop
 #wordcount hadoop
-wordcount spark
+#wordcount spark
 #dfsioe hadoop
-#dfsioe spark
+dfsioe spark
 #hivebench hadoop
 #kmeans hadoop
 #pagerank hadoop

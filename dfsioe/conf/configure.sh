@@ -20,22 +20,27 @@ dir=`cd "$dir"; pwd`
 if [ $platform ]; then
   if [ "$platform" = "spark" ]; then
     source ${dir}/../conf/spark-configure.sh
+    # paths
+    INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Spark
   fi
 else
   platform="hadoop"
+  # paths
+  INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Enh
 fi
-
-# paths
-INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Enh
 
 export HADOOP_OPTS="$HADOOP_OPTS -Dtest.build.data=${INPUT_HDFS}"
 MAP_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.map.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
 RED_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.reduce.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
 
 # dfsioe-read
-RD_NUM_OF_FILES=256
-RD_FILE_SIZE=200 #2000
+#RD_NUM_OF_FILES=256
+#RD_FILE_SIZE=200 #2000
 
 # dfsioe-write
-WT_NUM_OF_FILES=256
-WT_FILE_SIZE=100 #1000
+#WT_NUM_OF_FILES=256
+#WT_FILE_SIZE=100 #1000
+
+# combine variable of read and write to one 
+NUM_OF_FILES=256
+FILE_SIZE=200 # MBs

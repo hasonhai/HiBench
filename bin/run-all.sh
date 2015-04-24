@@ -37,13 +37,17 @@ while read benchmark_info; do
         export platform="hadoop"
         ;; # default platform
     esac
-    echo $platform
 
     if [ "$benchmark" = "dfsioe" ] ; then
         # dfsioe specific
         $DIR/dfsioe/bin/prepare-read.sh
-        $DIR/dfsioe/bin/run-read.sh
-        $DIR/dfsioe/bin/run-write.sh
+        if [ "$platform" = "spark"  ]; then
+          $DIR/dfsioe/bin/spark-run-read.sh
+          #$DIR/dfsioe/bin/spark-run-write.sh
+        else
+          $DIR/dfsioe/bin/run-read.sh
+          $DIR/dfsioe/bin/run-write.sh
+        fi
 
     elif [ "$benchmark" = "hivebench" ]; then
         # hivebench specific
