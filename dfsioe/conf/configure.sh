@@ -14,6 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+dir=`dirname "$0"`
+dir=`cd "$dir"; pwd`
+
+if [ $platform ]; then
+  if [ "$platform" = "spark" ]; then
+    source ${dir}/../conf/spark-configure.sh
+  fi
+else
+  platform="hadoop"
+fi
+
 # paths
 INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Enh
 

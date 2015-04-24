@@ -26,7 +26,7 @@ fi
 
 TMPLOGFILE=tmplog.log
 
-FORMATS="%-12s %-10s %-8s %-20s %-20s %-20s %-20s\n"
+FORMATS="%-12s %-10s %-10s %-8s %-20s %-20s %-20s %-20s\n"
 function timestamp(){
     sec=`date +%s`
     nanosec=`date +%N`
@@ -36,7 +36,7 @@ function timestamp(){
 }
 
 function print_field_name() {
-    printf "$FORMATS" Type Date Time Input_data_size "Duration(s)" "Throughput(bytes/s)" Throughput/node > $HIBENCH_REPORT
+    printf "$FORMATS" Type Platform Date Time Input_data_size "Duration(s)" "Throughput(bytes/s)" Throughput/node > $HIBENCH_REPORT
 }
 
 function gen_report() {
@@ -44,6 +44,7 @@ function gen_report() {
     local start=$2
     local end=$3
     local size=$4
+    if [ $5 ]; then local platform="$5"; else local platform="hadoop"; fi
     which bc > /dev/null 2>&1
     if [ $? -eq 1 ]; then
         echo "\"bc\" utility missing. Please install it to generate proper report."
@@ -64,7 +65,7 @@ function gen_report() {
         print_field_name
     fi
 
-    printf "$FORMATS" $type $(date +%F) $(date +%T) $size $duration $tput $tput_node >> $HIBENCH_REPORT
+    printf "$FORMATS" $type $platform $(date +%F) $(date +%T) $size $duration $tput $tput_node >> $HIBENCH_REPORT
 }
 
 function check_dir() {

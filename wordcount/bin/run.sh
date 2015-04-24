@@ -74,5 +74,5 @@ fi
 
 rm -rf ${DIR}/$TMPLOGFILE
 
-gen_report "WORDCOUNT" ${START_TIME} ${END_TIME} ${SIZE}
+gen_report "WORDCOUNT" ${START_TIME} ${END_TIME} ${SIZE} ${platform}
 
