@@ -28,10 +28,10 @@ $HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}
 
 # generate data
 if [ "$platform" = "spark" ]; then
-  JAR_PATH="${DIR}/../common/hibench/sparkdfsio/target/sparkdfsio-0.0.1-SNAPSHOT.jar"
+  JAR_PATH="${DIR}/../common/hibench/sparkdfsio/target/testdfsio-0.0.1-SNAPSHOT.jar"
   # Spark dfsio take file size at 2-bytes unit, need to convert to MegaByte-unit
-  let "FILE_SIZE =  $FILE_SIZE * 500000"
-  echo $SPARK_SUBMIT_EXECUTABLE --class fr.eurecom.dsg.SparkDFSIO \
+  # let "FILE_SIZE =  $FILE_SIZE * 500000" #currently the job only work with 256 file less than 100Kb
+  $SPARK_SUBMIT_EXECUTABLE --class fr.eurecom.dsg.spark.TestDFSIO \
     --num-executors ${NUM_EXECUTORS} \
     ${JAR_PATH} write ${NUM_OF_FILES} ${FILE_SIZE} $INPUT_HDFS \
     2>&1

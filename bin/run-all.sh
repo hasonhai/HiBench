@@ -43,7 +43,7 @@ while read benchmark_info; do
         $DIR/dfsioe/bin/prepare-read.sh
         if [ "$platform" = "spark"  ]; then
           $DIR/dfsioe/bin/spark-run-read.sh
-          #$DIR/dfsioe/bin/spark-run-write.sh
+          $DIR/dfsioe/bin/spark-run-write.sh
         else
           $DIR/dfsioe/bin/run-read.sh
           $DIR/dfsioe/bin/run-write.sh

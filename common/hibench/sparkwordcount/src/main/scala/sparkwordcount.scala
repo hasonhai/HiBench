@@ -33,7 +33,7 @@ object SparkWordCount {
     val wordCounts = tokenized.map((_, 1)).reduceByKey(_ + _)
     
     // output to character count to console
-    // System.out.println(wordCounts.collect().mkString(", "))
+    System.out.println(wordCounts.collect().mkString(", "))
     
     // output wordcount to hdfs
     wordCounts.saveAsTextFile(args(1))
