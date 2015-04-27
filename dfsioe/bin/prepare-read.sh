@@ -25,7 +25,7 @@ DIR=`cd $bin/../; pwd`
 
 # path check
 $HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}
-
+$HADOOP_EXECUTABLE fs -mkdir -p ${INPUT_HDFS}/io_data #fix bug cannot create io_data dir
 # generate data
 if [ "$platform" = "spark" ]; then
   JAR_PATH="${DIR}/../common/hibench/sparkdfsio/target/testdfsio-0.0.1-SNAPSHOT.jar"
@@ -36,7 +36,7 @@ if [ "$platform" = "spark" ]; then
     ${JAR_PATH} write ${NUM_OF_FILES} ${FILE_SIZE} $INPUT_HDFS \
     2>&1
 else # run on hadoop platform
-  ${HADOOP_EXECUTABLE} jar ${DATATOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+  ${HADOOP_EXECUTABLE} jar ${SPOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     -write -skipAnalyze -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 

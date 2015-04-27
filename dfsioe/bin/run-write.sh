@@ -25,13 +25,14 @@ DIR=`cd $bin/../; pwd`
 
 #path check
 #$HADOOP_EXECUTABLE dfs -rmr ${OUTPUT_HDFS}
+$HADOOP_EXECUTABLE fs -mkdir -p ${INPUT_HDFS}/io_data #fix bug cannot create io_data dir
 
 # pre-running
-OPTION="-write -nrFiles ${WT_NUM_OF_FILES} -fileSize ${WT_FILE_SIZE} -bufferSize 4096 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
+OPTION="-write -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
 START_TIME=`timestamp`
 
 #run benchmark
-${HADOOP_EXECUTABLE} jar ${DATATOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+${HADOOP_EXECUTABLE} jar ${SPOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     ${OPTION} -resFile ${DIR}/result_write.txt -tputFile ${DIR}/throughput_write.csv

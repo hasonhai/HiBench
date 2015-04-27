@@ -1,5 +1,5 @@
 tmplog.log
 hibench.report
-conf/version.sh
+version.sh
 target/
 build/

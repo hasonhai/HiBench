@@ -1,2 +1,2 @@
 export JDK_VERSION=1.7.0.75
-export HDP_VERSION=2.2.0.0-2041
+export HDP_VERSION=2.2.4.2-2

@@ -22,6 +22,10 @@ if [ $platform ]; then
     source ${dir}/../conf/spark-configure.sh
     # paths
     INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Spark
+  else
+    platform="hadoop"
+    # paths
+    INPUT_HDFS=${DATA_HDFS}/benchmarks/TestDFSIO-Enh
   fi
 else
   platform="hadoop"
@@ -32,6 +36,7 @@ fi
 export HADOOP_OPTS="$HADOOP_OPTS -Dtest.build.data=${INPUT_HDFS}"
 MAP_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.map.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
 RED_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.reduce.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
+export SPOTOOLS=${dir}/../../common/SPOTools/target/spotools-0.0.1-SNAPSHOT.jar
 
 # dfsioe-read
 #RD_NUM_OF_FILES=256
