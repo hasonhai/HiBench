@@ -17,7 +17,7 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-echo "========== Running dfsioe write =========="
+echo "========== Running dfsioe write on $platform =========="
 # configure
 DIR=`cd $bin/../; pwd`
 . "${DIR}/../bin/hibench-config.sh"
@@ -32,11 +32,17 @@ OPTION="-write -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 
 START_TIME=`timestamp`
 
 #run benchmark
-${HADOOP_EXECUTABLE} jar ${SPOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+if [ $ENHANCED ]; then
+${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     ${OPTION} -resFile ${DIR}/result_write.txt -tputFile ${DIR}/throughput_write.csv
-
+else
+${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
+    -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
+    -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
+    ${OPTION} -resFile ${DIR}/result_write.txt
+fi
 # post-running
 END_TIME=`timestamp`
 SIZE=`dir_size $INPUT_HDFS`

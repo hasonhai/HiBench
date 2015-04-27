@@ -29,6 +29,7 @@ export HADOOP_EXECUTABLE=/usr/hdp/current/hadoop-client/bin/hadoop
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export HADOOP_EXAMPLES_JAR=/usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar
 export MAPRED_EXECUTABLE=/usr/hdp/current/hadoop-mapreduce-client/bin/mapred
+export LEGACY_TESTDFSIO_JAR=/usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar
 #Set the variable below only in YARN mode
 export HADOOP_JOBCLIENT_TESTS_JAR=/usr/hdp/current/hadoop-yarn-client/hadoop-yarn-client.jar
 #Set these only when using spark on YARN

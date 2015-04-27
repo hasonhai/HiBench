@@ -36,16 +36,12 @@ fi
 export HADOOP_OPTS="$HADOOP_OPTS -Dtest.build.data=${INPUT_HDFS}"
 MAP_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.map.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
 RED_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.reduce.java.opts" | awk -F\< '{print $5}' | awk -F\> '{print $NF}'`
-export SPOTOOLS=${dir}/../../common/SPOTools/target/spotools-0.0.1-SNAPSHOT.jar
 
-# dfsioe-read
-#RD_NUM_OF_FILES=256
-#RD_FILE_SIZE=200 #2000
-
-# dfsioe-write
-#WT_NUM_OF_FILES=256
-#WT_FILE_SIZE=100 #1000
+# Select the tool
+# export DFSIOTOOLS=${dir}/../../common/SPOTools/target/spotools-0.0.1-SNAPSHOT.jar #DFSIO-Enh compile with Hadoop 2.6
+# export DFSIOTOOLS=${DATATOOLS} # DFSIO-Enh from HiBench compile with Hadoop 1, got bug
+export DFSIOTOOLS=${LEGACY_TESTDFSIO_JAR} #legacy version
 
 # combine variable of read and write to one 
-NUM_OF_FILES=256
+NUM_OF_FILES=64
 FILE_SIZE=200 # MBs

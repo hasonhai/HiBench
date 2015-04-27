@@ -17,7 +17,7 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-echo "========== Running dfsioe-read bench =========="
+echo "========== Running dfsioe-read bench on $platform =========="
 # configure
 DIR=`cd $bin/../; pwd`
 . "${DIR}/../bin/hibench-config.sh"
@@ -35,10 +35,17 @@ OPTION="-read -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 131072
 START_TIME=`timestamp`
 
 # run bench
-${HADOOP_EXECUTABLE} jar ${SPOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+if [ $ENHANCED ]; then
+${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     ${OPTION} -resFile ${DIR}/result_read.txt -tputFile ${DIR}/throughput_read.csv
+else
+${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
+    -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
+    -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
+    ${OPTION} -resFile ${DIR}/result_read.txt
+fi
 
 # post-running
 END_TIME=`timestamp`
