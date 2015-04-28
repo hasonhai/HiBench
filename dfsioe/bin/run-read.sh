@@ -31,15 +31,14 @@ $HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}/_*
 #OPTION="-read -skipAnalyze -nrFiles ${RD_NUM_OF_FILES} -fileSize ${RD_FILE_SIZE} -bufferSize 131072 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5"
 OPTION="-read -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 131072 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
 START_TIME=`timestamp`
-
 # run bench
 if [ $ENHANCED ]; then
-${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+$GETLOG ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     ${OPTION} -resFile ${DIR}/result_read.txt -tputFile ${DIR}/throughput_read.csv
 else
-${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
+$GETLOG ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     -read -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 131072 \
@@ -50,4 +49,8 @@ SIZE=`dir_size $INPUT_HDFS`
 
 # post-running
 END_TIME=`timestamp`
+if [ $GETLOG  ]; then
+  START_TIME=$( grep "HADOOP_CMD_START_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+  END_TIME=$( grep "HADOOP_CMD_STOP_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+fi
 gen_report "DFSIOE-READ" ${START_TIME} ${END_TIME} ${SIZE} $platform

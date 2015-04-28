@@ -22,6 +22,7 @@ this="$bin/$script"
 
 export HIBENCH_VERSION="4.0"
 source ${bin}/../conf/version.sh
+export GETLOG=${bin}/../jobvisualize/getlog.sh #comment this to turn-off getlog()
 ###################### Global Paths ##################
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-${JDK_VERSION}.x86_64/jre
 export HADOOP_HOME=/usr/hdp/current/hadoop-client

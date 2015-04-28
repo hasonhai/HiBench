@@ -3,7 +3,8 @@
 # Command syntax: ./getlog.sh [HADOOP_CMD]
 DIR=`dirname "$0"`
 DIR=`cd "$DIR"; pwd`
-source $DIR/conf/configure.sh
+. "${DIR}/../bin/hibench-config.sh"
+. "$DIR/conf/configure.sh"
 HADOOP_CMD=$*
 
 mkdir -p $DATAOUT
@@ -23,8 +24,13 @@ if [ $PACKAGE_COLLECT = "TRUE" ]; then
 else
     echo "Package collect is disable. We only collect log from services for each job."
 fi
-# Run hadoopjob
+# Run hadoop job
+rm $DIR/../timestamp
+HADOOP_CMD_START_TIME=`timestamp`
+echo HADOOP_CMD_START_TIME=$HADOOP_CMD_START_TIME >> $DIR/../timestamp
 time $HADOOP_CMD &> /dev/stdout | tee $DATAOUT/tee.tmp
+HADOOP_CMD_STOP_TIME=`timestamp`
+echo HADOOP_CMD_STOP_TIME=$HADOOP_CMD_STOP_TIME >> $DIR/../timestamp
 export id=`gawk -F "_" ' /Submitting tokens for job/ {print $(NF-1) "_" $NF}' $DATAOUT/tee.tmp`
 export jobid="job_$id"
 export applicationid="application_$id"
@@ -88,8 +94,8 @@ echo Collect application logs from HDFS...
 applicationlog="$DATAOUT/$applicationid.log" # Log from all container will be stored here
 yarn logs -applicationId $applicationid > $applicationlog 2> /dev/null #TODO: be careful when using executable directly
 # List of containers and servers executing them
-grep "Container:" $applicationlog | cut -d' ' -f2,4 --output-delimiter='_' | cut -d'_' -f1,2,3,4,5,6 > $DATAOUT/containername
-grep "Container:" $applicationlog | cut -d' ' -f2,4,6 --output-delimiter='_' | cut -d'_' -f7 > $DATAOUT/container_server
+grep "Container:" $applicationlog | cut -d' ' -f2 | tee $DATAOUT/containername
+grep "Container:" $applicationlog | cut -d' ' -f4 | cut -d'_' -f1 | tee $DATAOUT/container_server
 # Starting line of each container
 grep -n "Container:" $applicationlog | cut -d':' -f1 > $DATAOUT/lineindexstart   # Find where the container's log start
 tail -n +2 $DATAOUT/lineindexstart | gawk '{print $1-1}' > $DATAOUT/lineindexend # Find where the container's log end
@@ -144,7 +150,7 @@ fi
 echo Parsing containers\' logs...
 while read containerinfo; do
     containername=`echo $containerinfo | gawk '{ print $1 }'`
-    containerid=`echo $containername | gawk -F "_" '{ print $6 }'`
+    containerid=`echo $containername | gawk -F "_" '{ print $NF }'`
     server=`echo $containerinfo | gawk '{ print $4 }'`
     if [ "$containerid" = "000001" ]; then
         echo Container $containername is Application Master
@@ -243,4 +249,8 @@ if [ "$PACKAGE_COLLECT" = "TRUE" ] ; then
 fi
 rm $DATAOUT/jobtmp.delays
 mv $DATAOUT $DATAOUT/../${applicationid} #rename tmp dir to application_id
+mkdir -p $DATAOUT/../../figures
+DURATION=$( tail -n 1 $DATAOUT/jobtmp.delays | cut -d' ' -f1 )
+NUMBER_OF_NODES=$( wc -l ${CLUSTER} )
+${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
 echo "Done!"

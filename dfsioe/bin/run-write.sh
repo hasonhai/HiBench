@@ -25,7 +25,6 @@ DIR=`cd $bin/../; pwd`
 
 #path check
 #$HADOOP_EXECUTABLE dfs -rmr ${OUTPUT_HDFS}
-$HADOOP_EXECUTABLE fs -mkdir -p ${INPUT_HDFS}/io_data #fix bug cannot create io_data dir
 
 # pre-running
 OPTION="-write -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
@@ -33,12 +32,12 @@ START_TIME=`timestamp`
 
 #run benchmark
 if [ $ENHANCED ]; then
-${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
+$GETLOG ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} org.apache.hadoop.fs.dfsioe.TestDFSIOEnh \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     ${OPTION} -resFile ${DIR}/result_write.txt -tputFile ${DIR}/throughput_write.csv
 else
-${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
+$GETLOG ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
     -write -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 \
@@ -47,5 +46,10 @@ fi
 # post-running
 END_TIME=`timestamp`
 SIZE=`dir_size $INPUT_HDFS`
+
+if [ $GETLOG  ]; then
+  START_TIME=$( grep "HADOOP_CMD_START_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+  END_TIME=$( grep "HADOOP_CMD_STOP_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+fi
 gen_report "DFSIOE-WRITE" ${START_TIME} ${END_TIME} ${SIZE} $platform
 

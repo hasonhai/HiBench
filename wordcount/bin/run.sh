@@ -37,7 +37,7 @@ START_TIME=`timestamp`
 
 # run bench
 if [ "$platform" = "hadoop" ]; then
-  $HADOOP_EXECUTABLE jar $HADOOP_EXAMPLES_JAR wordcount \
+$GETLOG $HADOOP_EXECUTABLE jar $HADOOP_EXAMPLES_JAR wordcount \
     $COMPRESS_OPT \
     -D $CONFIG_REDUCER_NUMBER=${NUM_REDS} \
     -D mapreduce.inputformat.class=org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat \
@@ -73,6 +73,11 @@ else
 fi
 
 rm -rf ${DIR}/$TMPLOGFILE
+
+if [ $GETLOG ]; then
+  START_TIME=$( grep "HADOOP_CMD_START_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+  END_TIME=$( grep "HADOOP_CMD_STOP_TIME" ${DIR}/../timestamp | cut -d'=' -f2 )
+fi
 
 gen_report "WORDCOUNT" ${START_TIME} ${END_TIME} ${SIZE} ${platform}
 
