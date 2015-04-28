@@ -28,8 +28,6 @@ $HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}/io_read
 $HADOOP_EXECUTABLE $RMDIR_CMD ${INPUT_HDFS}/_*
 
 # pre-running
-#SIZE=`$HADOOP_EXECUTABLE fs -dus ${INPUT_HDFS} | grep -o [0-9]*`
-SIZE=`dir_size $INPUT_HDFS`
 #OPTION="-read -skipAnalyze -nrFiles ${RD_NUM_OF_FILES} -fileSize ${RD_FILE_SIZE} -bufferSize 131072 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5"
 OPTION="-read -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 131072 -plotInteval 1000 -sampleUnit m -sampleInteval 200 -sumThreshold 0.5 -tputReportTotal"
 START_TIME=`timestamp`
@@ -44,9 +42,12 @@ else
 ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
-    ${OPTION} -resFile ${DIR}/result_read.txt
+    -read -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 131072 \
+    -resFile ${DIR}/result_read.txt
 fi
+
+SIZE=`dir_size $INPUT_HDFS`
 
 # post-running
 END_TIME=`timestamp`
-gen_report "DFSIOE-READ" ${START_TIME} ${END_TIME} ${SIZE}
+gen_report "DFSIOE-READ" ${START_TIME} ${END_TIME} ${SIZE} $platform

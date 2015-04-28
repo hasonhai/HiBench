@@ -45,3 +45,7 @@ export DFSIOTOOLS=${LEGACY_TESTDFSIO_JAR} #legacy version
 # combine variable of read and write to one 
 NUM_OF_FILES=64
 FILE_SIZE=200 # MBs
+
+if [ "$DFSIOTOOLS" = "${LEGACY_TESTDFSIO_JAR}" ]; then
+  INPUT_HDFS=/benchmarks/TestDFSIO # Cannot change directory when using legacy tools
+fi

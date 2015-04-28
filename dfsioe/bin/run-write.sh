@@ -41,10 +41,11 @@ else
 ${HADOOP_EXECUTABLE} jar ${DFSIOTOOLS} TestDFSIO \
     -Dmapreduce.map.java.opts="-Dtest.build.data=${INPUT_HDFS} $MAP_JAVA_OPTS" \
     -Dmapreduce.reduce.java.opts="-Dtest.build.data=${INPUT_HDFS} $RED_JAVA_OPTS" \
-    ${OPTION} -resFile ${DIR}/result_write.txt
+    -write -nrFiles ${NUM_OF_FILES} -fileSize ${FILE_SIZE} -bufferSize 4096 \
+    -resFile ${DIR}/result_write.txt
 fi
 # post-running
 END_TIME=`timestamp`
 SIZE=`dir_size $INPUT_HDFS`
-gen_report "DFSIOE-WRITE" ${START_TIME} ${END_TIME} ${SIZE}
+gen_report "DFSIOE-WRITE" ${START_TIME} ${END_TIME} ${SIZE} $platform
 
