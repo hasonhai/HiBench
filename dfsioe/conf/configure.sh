@@ -43,8 +43,8 @@ RED_JAVA_OPTS=`cat $HADOOP_CONF_DIR/mapred-site.xml | grep "mapreduce.reduce.jav
 export DFSIOTOOLS=${LEGACY_TESTDFSIO_JAR} #legacy version
 
 # combine variable of read and write to one 
-NUM_OF_FILES=10
-FILE_SIZE=10 # MBs
+NUM_OF_FILES=128
+FILE_SIZE=512 # MBs
 
 if [ "$DFSIOTOOLS" = "${LEGACY_TESTDFSIO_JAR}" ]; then
   INPUT_HDFS=/benchmarks/TestDFSIO # Cannot change directory when using legacy tools

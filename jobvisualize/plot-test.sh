@@ -4,8 +4,8 @@
 echo "set term png size 800,800
 set mxtics 1
 set mytics 1
-set xlable 'Time (s)'
-set ylable 'Server index'
+set xlabel 'Time (s)'
+set ylabel 'Server index'
 set xrange [0:$3]
 set yrange [0:$4]
 set grid

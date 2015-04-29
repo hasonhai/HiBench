@@ -55,7 +55,8 @@ if [ $PACKAGE_COLLECT = "TRUE" ]; then
 fi
 
 # Collect ResourceManager LOGS
-ssh -i $KEY $USER@$YARNRM "tail -n $MAXLINE $YARNRMLOGFILE > yarn_$YARNRM.log"
+STARTLINE=$( ssh -i $KEY $USER@$YARNRM "grep -n -m 1 $id $YARNRMLOGFILE | cut -d: -f1" )
+ssh -i $KEY $USER@$YARNRM "tail -n +$STARTLINE $YARNRMLOGFILE > yarn_$YARNRM.log"
 scp -i $KEY $USER@$YARNRM:~/yarn_$YARNRM.log $DATAOUT/
 ssh -i $KEY $USER@$YARNRM "rm -f yarn_$YARNRM.log"
 
@@ -63,7 +64,8 @@ ssh -i $KEY $USER@$YARNRM "rm -f yarn_$YARNRM.log"
 for SERVER in `cat $CLUSTER`; do
     file_exist=$( ssh -i $KEY $USER@$SERVER "if [ -f $YARNNMLOGFILE ]; then echo 'existed'; fi" )
     if [ "$file_exist" = "existed" ]; then
-        ssh -i $KEY $USER@$SERVER "tail -n $MAXLINE $YARNNMLOGFILE > nodemanager_$SERVER.log"
+        STARTLINE=$( ssh -i $KEY $USER@$YARNRM "grep -n -m 1 $id $YARNNMLOGFILE | cut -d: -f1" )
+        ssh -i $KEY $USER@$SERVER "tail -n +$STARTLINE $YARNNMLOGFILE > nodemanager_$SERVER.log"
         scp -i $KEY $USER@$SERVER:~/nodemanager_$SERVER.log $DATAOUT/nodemanager_$SERVER.log
         ssh -i $KEY $USER@$SERVER "rm -f nodemanager_$SERVER.log"
     else echo "Datanode log not existed on $SERVER"
@@ -94,8 +96,9 @@ echo Collect application logs from HDFS...
 applicationlog="$DATAOUT/$applicationid.log" # Log from all container will be stored here
 yarn logs -applicationId $applicationid > $applicationlog 2> /dev/null #TODO: be careful when using executable directly
 # List of containers and servers executing them
-grep "Container:" $applicationlog | cut -d' ' -f2 | tee $DATAOUT/containername
-grep "Container:" $applicationlog | cut -d' ' -f4 | cut -d'_' -f1 | tee $DATAOUT/container_server
+grep "Container:" $applicationlog | cut -d' ' -f2 > $DATAOUT/containername
+grep "Container:" $applicationlog | cut -d' ' -f4 | cut -d'_' -f1 > $DATAOUT/container_server
+echo Found $( wc -l $DATAOUT/containername | cut -d' ' -f1 ) containers from application $applicationid logs
 # Starting line of each container
 grep -n "Container:" $applicationlog | cut -d':' -f1 > $DATAOUT/lineindexstart   # Find where the container's log start
 tail -n +2 $DATAOUT/lineindexstart | gawk '{print $1-1}' > $DATAOUT/lineindexend # Find where the container's log end
@@ -247,10 +250,10 @@ if [ "$PACKAGE_COLLECT" = "TRUE" ] ; then
     grep "PCAP$" $DATAOUT/pcaptmp.delays | grep -v "length 0" > $DATAOUT/pcap.delays # remove packet of length 0
     rm $DATAOUT/pcaptmp.delays
 fi
+DURATION=$( tail -n 1 $DATAOUT/jobtmp.delays | cut -d' ' -f1 )
 rm $DATAOUT/jobtmp.delays
 mv $DATAOUT $DATAOUT/../${applicationid} #rename tmp dir to application_id
 mkdir -p $DATAOUT/../../figures
-DURATION=$( tail -n 1 $DATAOUT/jobtmp.delays | cut -d' ' -f1 )
-NUMBER_OF_NODES=$( wc -l ${CLUSTER} )
+NUMBER_OF_NODES=$( wc -l ${CLUSTER} | cut -d' ' -f1 )
 ${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
 echo "Done!"

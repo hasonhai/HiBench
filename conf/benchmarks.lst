@@ -1,8 +1,16 @@
 #benchmark_name platform
 #
 #nutchindexing hadoop
-#wordcount hadoop
+wordcount hadoop
+wordcount hadoop
+wordcount hadoop
+wordcount hadoop
+wordcount hadoop
 #wordcount spark
+dfsioe hadoop
+dfsioe hadoop
+dfsioe hadoop
+dfsioe hadoop
 dfsioe hadoop
 #dfsioe spark
 #hivebench hadoop
