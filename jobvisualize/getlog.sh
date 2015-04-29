@@ -174,9 +174,8 @@ while read containerinfo; do
 done < $DATAOUT/containers
 
 echo Finding start time and end time from YARN logs file
-export startline=`grep -n -s "Storing application with id $applicationid" $YARNRMLOGFILE | gawk -F ":" '{print $1}'`
-export startdate=`gawk 'NR=='$startline-2' {print $0}' $YARNRMLOGFILE | gawk '{print $1}'`
-export starttime=`gawk 'NR=='$startline-2' {print $0}' $YARNRMLOGFILE | gawk '{print $2}'`
+export startdate=`grep -m 1 "Storing application with id $applicationid" $YARNRMLOGFILE | gawk '{print $1}'`
+export starttime=`grep -m 1 "Storing application with id $applicationid" $YARNRMLOGFILE | gawk '{print $2}'`
 echo "starttime"=$startdate $starttime
 # old version
 # export enddate=`grep -m 1 "Application removed - appId: $applicationid" $YARNRMLOGFILE | gawk '{print $1}'`
@@ -255,5 +254,5 @@ rm $DATAOUT/jobtmp.delays
 mv $DATAOUT $DATAOUT/../${applicationid} #rename tmp dir to application_id
 mkdir -p $DATAOUT/../../figures
 NUMBER_OF_NODES=$( wc -l ${CLUSTER} | cut -d' ' -f1 )
-${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
-echo "Done!"
+#${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
+echo "Benchmark finishs 1 (more) workloads"
