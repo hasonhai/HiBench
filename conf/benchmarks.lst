@@ -1,4 +1,4 @@
-#benchmark_name platform
+#benchmark_name platform number_of_tests concurrent_number
 #
 #nutchindexing hadoop
 wordcount hadoop

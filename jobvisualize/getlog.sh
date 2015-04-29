@@ -4,7 +4,7 @@
 DIR=`dirname "$0"`
 DIR=`cd "$DIR"; pwd`
 . "${DIR}/../bin/hibench-config.sh"
-. "$DIR/conf/configure.sh"
+. "${DIR}/conf/configure.sh"
 HADOOP_CMD=$*
 
 mkdir -p $DATAOUT
@@ -100,7 +100,7 @@ grep "Container:" $applicationlog | cut -d' ' -f2 > $DATAOUT/containername
 grep "Container:" $applicationlog | cut -d' ' -f4 | cut -d'_' -f1 > $DATAOUT/container_server
 echo Found $( wc -l $DATAOUT/containername | cut -d' ' -f1 ) containers from application $applicationid logs
 # Starting line of each container
-grep -n "Container:" $applicationlog | cut -d':' -f1 > $DATAOUT/lineindexstart   # Find where the container's log start
+grep -n -E "Container: .*${id}" $applicationlog | cut -d':' -f1 > $DATAOUT/lineindexstart   # Find where the container's log start
 tail -n +2 $DATAOUT/lineindexstart | gawk '{print $1-1}' > $DATAOUT/lineindexend # Find where the container's log end
 wc -l $applicationlog | cut -d' ' -f1 >> $DATAOUT/lineindexend
 paste -d' ' $DATAOUT/containername $DATAOUT/lineindexstart $DATAOUT/lineindexend $DATAOUT/container_server > $DATAOUT/containers # Merge to onefile
@@ -254,5 +254,5 @@ rm $DATAOUT/jobtmp.delays
 mv $DATAOUT $DATAOUT/../${applicationid} #rename tmp dir to application_id
 mkdir -p $DATAOUT/../../figures
 NUMBER_OF_NODES=$( wc -l ${CLUSTER} | cut -d' ' -f1 )
-#${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
-echo "Benchmark finishs 1 (more) workloads"
+${DIR}/plot-test.sh $DATAOUT/../${applicationid} $DATAOUT/../../figures/${applicationid}.png $DURATION $NUMBER_OF_NODES
+echo "Benchmark finishs 1 (more) workload"

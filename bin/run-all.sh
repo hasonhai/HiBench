@@ -19,13 +19,14 @@ DIR=`cd "${DIR}/.."; pwd`
 
 . $DIR/bin/hibench-config.sh
 
-if [ -f $HIBENCH_REPORT ]; then
-    rm $HIBENCH_REPORT
-fi
+#if [ -f $HIBENCH_REPORT ]; then
+#    rm $HIBENCH_REPORT
+#fi
 
 while read benchmark_info; do
-    benchmark=$( echo $benchmark_info | cut -d' ' -f1 )
-    platform=$( echo $benchmark_info | cut -d' ' -f2 )
+    echo "$benchmark_info"
+    benchmark=$( echo "$benchmark_info" | cut -d' ' -f1 )
+    platform=$( echo "$benchmark_info" | cut -d' ' -f2 )
     if [[ $benchmark == \#* ]]; then
         continue
     fi
